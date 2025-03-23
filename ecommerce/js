@@ -1,0 +1,84 @@
+<script>
+        // Animasi judul saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", function () {
+            let judul = document.getElementById("judul");
+            judul.style.opacity = "1";
+            judul.style.transform = "translateY(0)";
+            
+            // Animasi produk saat scroll
+            let produk = document.querySelectorAll(".produk");
+            let observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            produk.forEach(card => {
+                observer.observe(card);
+            });
+        });
+         /* Warna latar belakang halaman */
+body {
+    background: linear-gradient(to right, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+/* Animasi warna-warni untuk teks "Daftar Produk" */
+h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-image: linear-gradient(45deg, #ff0000, #ff7300, #ffeb00, #00ff00, #008cff, #4b0082, #ee82ee);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 5s infinite linear;
+}
+
+/* Efek hover pada tombol */
+.btn-primary {
+    background: linear-gradient(45deg, #ff512f, #dd2476);
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #ff7b2f, #dd6780);
+    transform: scale(1.1);
+}
+
+/* Efek bayangan pada kartu produk */
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Posisi gambar di tengah */
+.card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+/* Animasi warna-warni */
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+    </head>
+    </script>

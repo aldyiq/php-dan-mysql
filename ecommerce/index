@@ -1,0 +1,214 @@
+<?php
+$koneksi = new mysqli("localhost", "root", "", "toko_syauqi");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nama = $_POST['nama'];
+    $deskripsi = $_POST['deskripsi'];
+    $harga = $_POST['harga'];
+    $gambar = $_POST['gambar'];
+    $stok = $_POST['stok'];
+
+    $query = "INSERT INTO produk (nama, deskripsi, harga, gambar, stok) VALUES ('$nama', '$deskripsi', '$harga', '$gambar', '$stok')";
+    
+    if ($koneksi->query($query)) {
+        echo "✅ Produk berhasil ditambahkan!";
+    } else {
+        echo "❌ Error: " . $query . "<br>" . $koneksi->error;
+    }
+}
+?>-- Buat database
+CREATE DATABASE IF NOT EXISTS toko_syauqi;
+USE toko_syauqi;
+
+-- Tabel produk
+CREATE TABLE produk (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    harga DECIMAL(10,2) NOT NULL,
+    gambar VARCHAR(255) NOT NULL,
+    stok INT DEFAULT 0
+);
+
+-- Tambahkan beberapa produk awal
+INSERT INTO produk (nama, deskripsi, harga, gambar, stok) VALUES
+('Laptop Asus', 'Laptop gaming high performance', 15000000, 'img/Lpt.jpg', 10),
+('iPhone 13', 'Smartphone flagship Apple', 12000000, 'img/iphone13.jpg', 15),
+('Kulkas LG', 'Kulkas hemat energi', 5000000, 'img/kulkas.jpg', 5);
+
+-- Tabel pengguna (users)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'customer') DEFAULT 'customer'
+);
+
+-- Tambahkan pengguna admin (password dienkripsi dengan MD5 untuk contoh)
+INSERT INTO users (nama, email, password, role) VALUES
+('Admin Syauqi', 'admin@syauqi.com', MD5('admin123'), 'admin');
+
+-- Tabel transaksi
+CREATE TABLE transaksi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    produk_id INT,
+    jumlah INT NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (produk_id) REFERENCES produk(id)
+);
+
+
+<form method="post">
+    <input type="text" name="nama" placeholder="Nama Produk" required><br>
+    <textarea name="deskripsi" placeholder="Deskripsi"></textarea><br>
+    <input type="number" name="harga" placeholder="Harga" required><br>
+    <input type="text" name="gambar" placeholder="URL Gambar"><br>
+    <input type="number" name="stok" placeholder="Stok"><br>
+    <button type="submit">Tambah Produk</button>
+</form>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Modern Syauqi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- CSS Khusus -->
+    <style>
+        /* Import Font Poppins */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #333;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card-img-top:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center" id="judul">Daftar Produk Syauqi</h2>
+        <div class="row">
+    
+            <!-- Produk 1 -->
+            <div class="col-md-4 col-sm-6 col-12 mb-4">
+                <div class="card produk">
+                    <img src="img/Lpt.jpg" class="card-img-top" alt="Laptop Asus">
+                    <div class="card-body">
+                        <h5 class="card-title">Laptop Asus</h5>
+                        <p class="card-text">Laptop gaming high performance</p>
+                        <p class="card-text"><strong>Rp 15.000.000</strong></p>
+                        <a href="cart.php?add=1" class="btn btn-primary">Tambah ke Keranjang</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produk 2 -->
+            <div class="col-md-4 col-sm-6 col-12 mb-4">
+                <div class="card produk">
+                    <img src="img/iphone13.jpg" class="card-img-top" alt="iPhone 13">
+                    <div class="card-body">
+                        <h5 class="card-title">iPhone 13</h5>
+                        <p class="card-text">Smartphone flagship Apple</p>
+                        <p class="card-text"><strong>Rp 12.000.000</strong></p>
+                        <a href="cart.php?add=2" class="btn btn-primary">Tambah ke Keranjang</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produk 3 -->
+            <div class="col-md-4 col-sm-6 col-12 mb-4">
+                <div class="card produk">
+                    <img src="img/kulkas.jpg" class="card-img-top" alt="Kulkas LG">
+                    <div class="card-body">
+                        <h5 class="card-title">Kulkas LG</h5>
+                        <p class="card-text">Kulkas hemat energi</p>
+                        <p class="card-text"><strong>Rp 5.000.000</strong></p>
+                        <a href="cart.php?add=3" class="btn btn-primary">Tambah ke Keranjang</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <head>
+        <title>Toko Syauqi jaya</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="css/style.css">
+
+    </head>
+    <script>
+        // Animasi judul saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", function () {
+            let judul = document.getElementById("judul");
+            judul.style.opacity = "1";
+            judul.style.transform = "translateY(0)";
+            
+            // Animasi produk saat scroll
+            let produk = document.querySelectorAll(".produk");
+            let observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            produk.forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
